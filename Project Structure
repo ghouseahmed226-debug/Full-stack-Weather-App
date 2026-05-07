@@ -1,0 +1,40 @@
+weather-app/
+├── backend/
+│   ├── models/
+│   │   └── WeatherRecord.js       # Mongoose schema
+│   ├── routes/
+│   │   ├── weather.js             # Weather API endpoints
+│   │   ├── records.js             # CRUD endpoints
+│   │   └── export.js              # Export endpoints (5 formats)
+│   ├── utils/
+│   │   └── weatherApi.js          # OpenWeatherMap helpers
+│   ├── server.js                  # Express app entry point
+│   ├── package.json
+│   └── .env.example
+│
+├── frontend/
+│   ├── public/
+│   │   └── index.html
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── SearchBar.js       # Location search with suggestions
+│   │   │   ├── CurrentWeather.js  # Current conditions + detail grid
+│   │   │   ├── ForecastStrip.js   # 5-day forecast cards
+│   │   │   ├── AirQuality.js      # AQI + pollutant bars
+│   │   │   ├── YouTubePanel.js    # Location videos
+│   │   │   └── SaveRecordModal.js # Save to DB modal
+│   │   ├── hooks/
+│   │   │   └── useWeather.js      # Weather fetch hook
+│   │   ├── pages/
+│   │   │   ├── WeatherPage.js     # Main weather view
+│   │   │   ├── RecordsPage.js     # CRUD + export table
+│   │   │   └── AboutPage.js       # About + checklist
+│   │   ├── utils/
+│   │   │   ├── api.js             # Axios API client
+│   │   │   └── weather.js         # Weather utility helpers
+│   │   ├── App.js
+│   │   └── index.js
+│   ├── package.json
+│   └── .env.example
+│
+└── README.md
