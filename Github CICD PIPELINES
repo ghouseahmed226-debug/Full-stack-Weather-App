@@ -1,0 +1,95 @@
+# CI/CD Setup Guide
+
+This project uses **GitHub Actions** for continuous integration and deployment.
+
+---
+
+## Workflows
+
+| File | Trigger | What it does |
+|------|---------|-------------|
+| `ci.yml` | Every push / PR to `main` or `develop` | Lint → Test → Build on Node 18 & 20 |
+| `cd.yml` | Push to `main` only | Deploys backend to Railway, frontend to Vercel |
+| `security.yml` | Every Monday 09:00 UTC | `npm audit` both packages |
+
+---
+
+## Required GitHub Secrets
+
+Go to **Settings → Secrets and variables → Actions → New repository secret** and add:
+
+### Always required
+| Secret | Where to get it |
+|--------|----------------|
+| `OPENWEATHER_API_KEY` | [openweathermap.org/api](https://openweathermap.org/api) (free tier) |
+
+### For Vercel (frontend deploy)
+| Secret | Where to get it |
+|--------|----------------|
+| `VERCEL_TOKEN` | vercel.com → Account Settings → Tokens |
+| `VERCEL_ORG_ID` | `vercel.json` or Vercel dashboard → Project Settings |
+| `VERCEL_PROJECT_ID` | Vercel dashboard → Project Settings |
+| `REACT_APP_API_URL` | Your deployed Railway backend URL, e.g. `https://weather-api.up.railway.app/api` |
+
+### For Railway (backend deploy)
+| Secret | Where to get it |
+|--------|----------------|
+| `RAILWAY_TOKEN` | railway.app → Account Settings → Tokens |
+
+### Optional
+| Secret | Purpose |
+|--------|---------|
+| `SLACK_WEBHOOK_URL` | Slack deploy-failure notifications |
+
+---
+
+## Branch Strategy
+
+```
+main        ← production (protected, requires PR + CI green)
+develop     ← staging / integration branch
+feature/*   ← individual features, PRs target develop
+hotfix/*    ← urgent fixes, PRs target main directly
+```
+
+### Protect `main`
+
+Go to **Settings → Branches → Add rule** for `main`:
+
+- ✅ Require a pull request before merging
+- ✅ Require status checks to pass (select `Backend – Lint & Test` and `Frontend – Lint, Test & Build`)
+- ✅ Require branches to be up to date before merging
+- ✅ Do not allow bypassing the above settings
+
+---
+
+## Local Development
+
+CI runs the same commands locally — keep them green before pushing:
+
+```bash
+# Backend
+cd backend
+npm ci
+npm run lint
+npm test
+
+# Frontend
+cd frontend
+npm ci
+npm run lint
+npm test -- --watchAll=false
+npm run build
+```
+
+---
+
+## Deployment Targets (free tiers)
+
+| Service | What | Free tier |
+|---------|------|-----------|
+| [Vercel](https://vercel.com) | Frontend (React) | ✅ Hobby plan |
+| [Railway](https://railway.app) | Backend (Express) + MongoDB | ✅ Starter $5/mo credit |
+| [MongoDB Atlas](https://cloud.mongodb.com) | Database | ✅ 512 MB free cluster |
+
+> **Alternative:** Replace Railway with [Render](https://render.com) — same secrets pattern, change `railway up` to a Render deploy hook curl in `cd.yml`.
